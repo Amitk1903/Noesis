@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Noesis - Physics</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen bg-neutral-950 text-neutral-200 font-sans">
+
+<div class="flex flex-col h-full">
+
+    <header class="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+        <h1 class="text-lg tracking-wide font-medium">NOESIS</h1>
+        <div class="flex gap-6 text-sm">
+            <a href="math.html" class="text-neutral-400 hover:text-neutral-200">Math</a>
+            <a href="physics.html" class="text-neutral-100 border-b border-neutral-100 pb-1">Physics</a>
+        </div>
+    </header>
+
+    <main class="flex flex-1 overflow-hidden">
+
+        <aside class="w-80 border-r border-neutral-800 p-5 space-y-4">
+            <div>
+                <p class="text-xs uppercase tracking-wider text-neutral-500 mb-1">Mapping</p>
+                <input class="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" value="x → position">
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-neutral-500 mb-1">Units</p>
+                <input class="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" value="m, s">
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-neutral-500 mb-1">Constraints</p>
+                <input class="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" value="energy conserved">
+            </div>
+        </aside>
+
+        <section class="flex-1 flex items-center justify-center bg-gradient-to-br from-neutral-900 to-black text-neutral-500 text-sm">
+            Live physical system
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>
