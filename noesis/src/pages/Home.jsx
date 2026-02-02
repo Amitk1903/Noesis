@@ -1,10 +1,27 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import { FloatingLines } from '@/components/ui/FloatingLines';
 
 export default function Home() {
   return (
-    <div className="min-h-screen text-white">
-      <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen text-white relative">
+      {/* Floating Lines Background */}
+      <div className="fixed inset-0 z-0">
+        <FloatingLines 
+          linesGradient={['#667eea', '#764ba2', '#FF6B9D']}
+          lineCount={[6, 8, 6]}
+          lineDistance={[5, 4, 5]}
+          animationSpeed={0.8}
+          interactive={true}
+          bendRadius={5.0}
+          bendStrength={-0.5}
+          parallax={true}
+          parallaxStrength={0.15}
+          mixBlendMode="screen"
+        />
+      </div>
+      
+      <div className="flex flex-col min-h-screen relative z-10">
         <Header />
         
         <main className="flex flex-1 items-center justify-center px-8 pt-32 pb-16">

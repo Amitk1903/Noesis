@@ -4,13 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    background-attachment: fixed;
-    overflow-x: hidden;
-}
-
 .glass {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(20px);
@@ -140,9 +133,13 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
-    }
+    border-color: hsl(var(--border));
+  }
   body {
-    @apply bg-background text-foreground;
-    }
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    color: hsl(var(--foreground));
+  }
 }
