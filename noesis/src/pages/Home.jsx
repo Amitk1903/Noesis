@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import DarkVeil from '@/component/DarkVeil';
 import GradientText from '@/component/GradientText';
+import TargetCursor from '@/component/TargetCursor';
 
 export default function Home() {
   return (
     <div className="min-h-screen text-white relative">
+      <TargetCursor targetSelector=".cursor-target" />
+      
       {/* Dark Veil Background */}
       <div className="fixed inset-0 z-0">
         <DarkVeil />
@@ -27,9 +30,9 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-16">
               
-              <Link to="/math" className="group glass glass-hover shimmer card-glow-blue rounded-3xl p-10 transition-all duration-500">
+              <Link to="/math" className="cursor-target group glass glass-hover rounded-3xl p-10 transition-all duration-500">
                 <div className="flex flex-col items-center text-center space-y-8">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-5xl shadow-2xl glow group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-5xl shadow-lg group-hover:scale-110 transition-transform duration-500">
                     ∑
                   </div>
                   <div className="space-y-3">
@@ -44,9 +47,9 @@ export default function Home() {
                 </div>
               </Link>
 
-              <Link to="/physics" className="group glass glass-hover shimmer card-glow-purple rounded-3xl p-10 transition-all duration-500">
+              <Link to="/physics" className="cursor-target group glass glass-hover rounded-3xl p-10 transition-all duration-500">
                 <div className="flex flex-col items-center text-center space-y-8">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-5xl shadow-2xl glow group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-5xl shadow-lg group-hover:scale-110 transition-transform duration-500">
                     ⚡
                   </div>
                   <div className="space-y-3">
