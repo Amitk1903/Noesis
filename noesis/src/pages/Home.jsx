@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import DarkVeil from '@/component/DarkVeil';
-import GradientText from '@/component/GradientText';
+import ShinyText from '@/component/ShinyText';
 import TargetCursor from '@/component/TargetCursor';
 
 export default function Home() {
@@ -20,10 +20,14 @@ export default function Home() {
         <main className="flex flex-1 items-center justify-center px-8 pt-32 pb-16">
           <div className="text-center space-y-16 max-w-6xl w-full">
             <div className="space-y-6">
-              <h2 className="text-7xl title-font font-bold tracking-tight">
-                <GradientText colors={['#667eea', '#764ba2', '#FF6B9D']}>
-                  Welcome to Noesis
-                </GradientText>
+              <h2 className="text-7xl font-bold tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <ShinyText
+                  text="Welcome to Noesis"
+                  speed={3}
+                  color="#ffffff"
+                  shineColor="#667eea"
+                  spread={100}
+                />
               </h2>
               <p className="text-white/60 text-xl font-light tracking-wide">Explore the beauty of mathematics and physics</p>
             </div>
