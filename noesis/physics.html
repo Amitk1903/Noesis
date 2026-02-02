@@ -18,26 +18,29 @@
         </div>
     </header>
 
-    <main class="flex flex-1 overflow-hidden">
+    <main class="flex-1 flex items-center justify-center bg-gradient-to-br from-neutral-900 to-black p-8">
 
-        <aside class="w-80 border-r border-neutral-800 p-5 space-y-4">
-            <div>
-                <p class="text-xs uppercase tracking-wider text-neutral-500 mb-1">Mapping</p>
-                <input class="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" value="x → position">
-            </div>
-            <div>
-                <p class="text-xs uppercase tracking-wider text-neutral-500 mb-1">Units</p>
-                <input class="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" value="m, s">
-            </div>
-            <div>
-                <p class="text-xs uppercase tracking-wider text-neutral-500 mb-1">Constraints</p>
-                <input class="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" value="energy conserved">
-            </div>
-        </aside>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
+            
+            <!-- Projectile Motion Simulator -->
+            <a href="sims/projectile.html" class="group block bg-neutral-900/50 backdrop-blur border border-neutral-800 rounded-2xl p-6 hover:border-neutral-600 transition-all duration-300 hover:shadow-lg hover:shadow-neutral-800/50">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-2xl">
+                        🎯
+                    </div>
+                    <svg class="w-5 h-5 text-neutral-600 group-hover:text-neutral-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium mb-2 text-neutral-100">Projectile Motion</h3>
+                <p class="text-sm text-neutral-400 leading-relaxed">Simulate parabolic trajectories with customizable velocity, angle, and air resistance. Visualize real-time physics calculations.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs px-2 py-1 rounded-md bg-neutral-800 text-neutral-400">Kinematics</span>
+                    <span class="text-xs px-2 py-1 rounded-md bg-neutral-800 text-neutral-400">2D Motion</span>
+                </div>
+            </a>
 
-        <section class="flex-1 flex items-center justify-center bg-gradient-to-br from-neutral-900 to-black text-neutral-500 text-sm">
-            Live physical system
-        </section>
+        </div>
 
     </main>
 
