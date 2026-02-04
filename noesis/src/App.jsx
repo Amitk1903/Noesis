@@ -3,6 +3,8 @@ import Home from './pages/Home';
 import Math from './pages/Math';
 import Physics from './pages/Physics';
 import Projectile from './pages/Projectile';
+import Pendulum from './pages/Pendulum';
+import Collision from './pages/Collision';
 import './index.css';
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
         <Route path="/math" element={<Math />} />
         <Route path="/physics" element={<Physics />} />
         <Route path="/projectile" element={<Projectile />} />
+        <Route path="/pendulum" element={<Pendulum />} />
+        <Route path="/collision" element={<Collision />} />
       </Routes>
     </Router>
   );
