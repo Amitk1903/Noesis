@@ -27,9 +27,16 @@ export default function Projectile() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      canvas.width = 1000;
-      canvas.height = 600;
-      draw();
+      const updateCanvasSize = () => {
+        const isMobile = window.innerWidth < 768;
+        canvas.width = isMobile ? Math.min(window.innerWidth - 32, 600) : 1000;
+        canvas.height = isMobile ? 400 : 600;
+        draw();
+      };
+      
+      updateCanvasSize();
+      window.addEventListener('resize', updateCanvasSize);
+      return () => window.removeEventListener('resize', updateCanvasSize);
     }
   }, []);
 
@@ -233,63 +240,65 @@ export default function Projectile() {
   };
 
   return (
-    <div className="h-screen bg-neutral-950 text-neutral-200">
-      <div className="flex flex-col h-full">
+    <div className="min-h-screen bg-neutral-950 text-neutral-200">
+      <div className="flex flex-col min-h-screen">
         <Header />
 
-        <main className="flex flex-1 overflow-hidden pt-24">
-          <aside className="w-80 border-r border-neutral-800 p-5 space-y-4 overflow-y-auto">
+        <main className="flex flex-col md:flex-row flex-1 overflow-hidden pt-16 md:pt-24">
+          <aside className="w-full md:w-80 border-b md:border-b-0 md:border-r border-neutral-800 p-4 md:p-5 space-y-3 md:space-y-4 overflow-y-auto max-h-[40vh] md:max-h-none">
             <div>
-              <h2 className="text-sm font-medium mb-4">Projectile Motion</h2>
+              <h2 className="text-sm font-medium mb-3 md:mb-4">Projectile Motion</h2>
             </div>
             
-            <div>
-              <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Initial Velocity (m/s)</label>
-              <input 
-                type="number" 
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
-                value={velocity}
-                onChange={(e) => setVelocity(parseFloat(e.target.value))}
-                min="0" 
-                max="200"
-              />
-            </div>
-            
-            <div>
-              <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Launch Angle (°)</label>
-              <input 
-                type="number" 
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
-                value={angle}
-                onChange={(e) => setAngle(parseFloat(e.target.value))}
-                min="0" 
-                max="90"
-              />
-            </div>
-            
-            <div>
-              <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Gravity (m/s²)</label>
-              <input 
-                type="number" 
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
-                value={gravity}
-                onChange={(e) => setGravity(parseFloat(e.target.value))}
-                min="0.1" 
-                max="50" 
-                step="0.01"
-              />
-            </div>
-            
-            <div>
-              <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Initial Height (m)</label>
-              <input 
-                type="number" 
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
-                value={height}
-                onChange={(e) => setHeight(parseFloat(e.target.value))}
-                min="0" 
-                max="100"
-              />
+            <div className="grid grid-cols-2 md:grid-cols-1 gap-3 md:gap-4">
+              <div>
+                <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Initial Velocity (m/s)</label>
+                <input 
+                  type="number" 
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
+                  value={velocity}
+                  onChange={(e) => setVelocity(parseFloat(e.target.value))}
+                  min="0" 
+                  max="200"
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Launch Angle (°)</label>
+                <input 
+                  type="number" 
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
+                  value={angle}
+                  onChange={(e) => setAngle(parseFloat(e.target.value))}
+                  min="0" 
+                  max="90"
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Gravity (m/s²)</label>
+                <input 
+                  type="number" 
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
+                  value={gravity}
+                  onChange={(e) => setGravity(parseFloat(e.target.value))}
+                  min="0.1" 
+                  max="50" 
+                  step="0.01"
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs uppercase tracking-wider text-neutral-500 mb-1 block">Initial Height (m)</label>
+                <input 
+                  type="number" 
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-md p-2 text-sm focus:outline-none focus:border-neutral-600" 
+                  value={height}
+                  onChange={(e) => setHeight(parseFloat(e.target.value))}
+                  min="0" 
+                  max="100"
+                />
+              </div>
             </div>
             
             <div className="flex items-center gap-2">
@@ -318,22 +327,22 @@ export default function Projectile() {
               </div>
             )}
             
-            <div className="pt-4 space-y-2">
+            <div className="grid grid-cols-2 gap-2 pt-2 md:pt-4">
               <button 
                 onClick={launch}
-                className="w-full bg-neutral-100 text-neutral-900 rounded-md py-2 text-sm font-medium hover:bg-neutral-200 transition"
+                className="w-full bg-neutral-100 text-neutral-900 rounded-md py-2 text-sm font-medium hover:bg-neutral-200 transition active:bg-neutral-300"
               >
                 Launch
               </button>
               <button 
                 onClick={reset}
-                className="w-full bg-neutral-800 text-neutral-200 rounded-md py-2 text-sm font-medium hover:bg-neutral-700 transition"
+                className="w-full bg-neutral-800 text-neutral-200 rounded-md py-2 text-sm font-medium hover:bg-neutral-700 transition active:bg-neutral-600"
               >
                 Reset
               </button>
             </div>
             
-            <div className="pt-4 border-t border-neutral-800 space-y-2 text-xs">
+            <div className="pt-3 md:pt-4 border-t border-neutral-800 grid grid-cols-2 md:grid-cols-1 gap-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-neutral-500">Max Height:</span>
                 <span>{stats.maxHeight > 0 ? `${stats.maxHeight.toFixed(2)} m` : '—'}</span>
@@ -353,8 +362,8 @@ export default function Projectile() {
             </div>
           </aside>
 
-          <section className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-neutral-900 to-black p-4">
-            <canvas ref={canvasRef} className="border border-neutral-800 rounded"></canvas>
+          <section className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-neutral-900 to-black p-4 overflow-auto">
+            <canvas ref={canvasRef} className="border border-neutral-800 rounded max-w-full"></canvas>
           </section>
         </main>
       </div>
