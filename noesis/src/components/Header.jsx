@@ -20,10 +20,10 @@ export default function Header() {
       textColor: '#a855f7',
       links: [
         { label: 'Overview', href: '/physics', ariaLabel: 'Physics Overview' },
-        { label: 'Projectile Motion', href: '/projectile', ariaLabel: 'Go to Projectile Motion' },
-        { label: 'Pendulum', href: '/pendulum', ariaLabel: 'Go to Pendulum Simulator' },
-        { label: 'Collision Lab', href: '/collision', ariaLabel: 'Go to Collision Lab' },
-        { label: "Pascal's Law", href: '/pascals-law', ariaLabel: "Go to Pascal's Law" }
+        { label: 'Kinematics', href: '/projectile', ariaLabel: 'Go to Projectile Motion' },
+        { label: 'Energy', href: '/pendulum', ariaLabel: 'Go to Pendulum Simulator' },
+        { label: 'Momentum', href: '/collision', ariaLabel: 'Go to Collision Lab' },
+        { label: 'Fluids', href: '/pascals-law', ariaLabel: "Go to Pascal's Law" }
       ]
     },
     {

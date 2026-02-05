@@ -15,9 +15,9 @@ export default function Physics() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-2xl">
                   🎯
                 </div>
-                <svg className="w-5 h-5 text-neutral-600 group-hover:text-neutral-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
+                <div className="px-2 py-1 bg-blue-500/20 border border-blue-500/30 rounded text-xs text-blue-400 font-medium">
+                  Kinematics
+                </div>
               </div>
               <h3 className="text-lg font-medium mb-2 text-neutral-100">Projectile Motion</h3>
               <p className="text-sm text-neutral-400 leading-relaxed">Simulate parabolic trajectories with customizable velocity, angle, and air resistance. Visualize real-time physics calculations.</p>
@@ -32,9 +32,9 @@ export default function Physics() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl">
                   ⚖️
                 </div>
-                <svg className="w-5 h-5 text-neutral-600 group-hover:text-neutral-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
+                <div className="px-2 py-1 bg-purple-500/20 border border-purple-500/30 rounded text-xs text-purple-400 font-medium">
+                  Energy
+                </div>
               </div>
               <h3 className="text-lg font-medium mb-2 text-neutral-100">Pendulum Simulator</h3>
               <p className="text-sm text-neutral-400 leading-relaxed">Explore simple harmonic motion with adjustable length, mass, and damping. Watch energy conservation in action.</p>
@@ -49,9 +49,9 @@ export default function Physics() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-red-500 flex items-center justify-center text-2xl">
                   💥
                 </div>
-                <svg className="w-5 h-5 text-neutral-600 group-hover:text-neutral-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
+                <div className="px-2 py-1 bg-red-500/20 border border-red-500/30 rounded text-xs text-red-400 font-medium">
+                  Momentum
+                </div>
               </div>
               <h3 className="text-lg font-medium mb-2 text-neutral-100">Collision Lab</h3>
               <p className="text-sm text-neutral-400 leading-relaxed">Study elastic and inelastic collisions with conservation of momentum and energy. Visualize center of mass.</p>
@@ -66,9 +66,9 @@ export default function Physics() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-2xl">
                   ⚙️
                 </div>
-                <svg className="w-5 h-5 text-neutral-600 group-hover:text-neutral-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
+                <div className="px-2 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded text-xs text-cyan-400 font-medium">
+                  Fluids
+                </div>
               </div>
               <h3 className="text-lg font-medium mb-2 text-neutral-100">Pascal's Law</h3>
               <p className="text-sm text-neutral-400 leading-relaxed">Interactive hydraulic press demonstrating pressure transmission and force multiplication in fluids.</p>
