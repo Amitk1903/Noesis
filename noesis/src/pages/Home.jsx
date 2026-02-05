@@ -51,7 +51,7 @@ export default function Home() {
               </div>
               
               <h1 className="text-8xl md:text-9xl font-bold tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                <GlitchText text="NOESIS" className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100" />
+                <GlitchText text="Noesis" className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100" />
               </h1>
               
               <p className="text-white/70 text-2xl font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
