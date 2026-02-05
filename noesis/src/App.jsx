@@ -6,6 +6,9 @@ import Projectile from './pages/Projectile';
 import Pendulum from './pages/Pendulum';
 import Collision from './pages/Collision';
 import PascalsLaw from './pages/PascalsLaw';
+import Documentation from './pages/Documentation';
+import Examples from './pages/Examples';
+import About from './pages/About';
 import './index.css';
 
 function App() {
@@ -19,6 +22,9 @@ function App() {
         <Route path="/pendulum" element={<Pendulum />} />
         <Route path="/collision" element={<Collision />} />
         <Route path="/pascals-law" element={<PascalsLaw />} />
+        <Route path="/documentation" element={<Documentation />} />
+        <Route path="/examples" element={<Examples />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </Router>
   );

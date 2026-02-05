@@ -31,9 +31,9 @@ export default function Header() {
       bgColor: 'rgba(236, 72, 153, 0.1)',
       textColor: '#ec4899',
       links: [
-        { label: 'Documentation', href: '#', ariaLabel: 'View Documentation' },
-        { label: 'Examples', href: '#', ariaLabel: 'View Examples' },
-        { label: 'About', href: '#', ariaLabel: 'About Noesis' }
+        { label: 'Documentation', href: '/documentation', ariaLabel: 'View Documentation' },
+        { label: 'Examples', href: '/examples', ariaLabel: 'View Examples' },
+        { label: 'About', href: '/about', ariaLabel: 'About Noesis' }
       ]
     }
   ];
