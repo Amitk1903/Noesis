@@ -19,9 +19,10 @@ export default function Header() {
       bgColor: 'rgba(168, 85, 247, 0.1)',
       textColor: '#a855f7',
       links: [
-        { label: 'Mechanics', href: '/physics', ariaLabel: 'Go to Mechanics' },
-        { label: 'Kinematics', href: '/physics', ariaLabel: 'Go to Kinematics' },
-        { label: 'Projectile', href: '/projectile', ariaLabel: 'Go to Projectile Motion' }
+        { label: 'Overview', href: '/physics', ariaLabel: 'Physics Overview' },
+        { label: 'Projectile Motion', href: '/projectile', ariaLabel: 'Go to Projectile Motion' },
+        { label: 'Pendulum', href: '/pendulum', ariaLabel: 'Go to Pendulum Simulator' },
+        { label: 'Collision Lab', href: '/collision', ariaLabel: 'Go to Collision Lab' }
       ]
     },
     {
