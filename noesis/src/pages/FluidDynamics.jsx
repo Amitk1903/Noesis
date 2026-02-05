@@ -54,6 +54,10 @@ export default function FluidDynamics() {
         down: true,
         button: e.button
       };
+      
+      if (!isRunning) {
+        start();
+      }
     };
 
     const handleMouseMove = (e) => {
@@ -77,7 +81,7 @@ export default function FluidDynamics() {
       canvas.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('mouseleave', handleMouseUp);
     };
-  }, []);
+  }, [isRunning]);
 
   const start = () => {
     setIsRunning(true);
@@ -145,9 +149,9 @@ export default function FluidDynamics() {
     if (!canvas) return;
     
     const mouse = mouseRef.current;
-    if (mouse.down && isRunning) {
+    if (mouse.down) {
       if (mouse.button === 0) {
-        spawnParticles(mouse.x, mouse.y, 3);
+        spawnParticles(mouse.x, mouse.y, 5);
       }
     }
     
@@ -258,10 +262,7 @@ export default function FluidDynamics() {
     });
     
     draw();
-    
-    if (isRunning) {
-      animationIdRef.current = requestAnimationFrame(animate);
-    }
+    animationIdRef.current = requestAnimationFrame(animate);
   };
 
   const draw = () => {
@@ -359,6 +360,7 @@ export default function FluidDynamics() {
               Interactive particle-based fluid simulation with pressure, viscosity, and surface tension
             </p>
           </div>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-neutral-900/50 backdrop-blur border border-neutral-800 rounded-2xl p-6">
@@ -388,8 +390,8 @@ export default function FluidDynamics() {
                   <span className="font-medium text-cyan-400">Click and drag</span> to spawn fluid particles. 
                   Choose different fluid types for varying viscosity and behavior.
                 </p>
-              </div>
-            </div>
+              </div>anywhere on the canvas to spawn fluid particles. 
+                  The simulation starts automatically!
 
             <div className="space-y-4">
               <div className="bg-neutral-900/50 backdrop-blur border border-neutral-800 rounded-2xl p-6">
