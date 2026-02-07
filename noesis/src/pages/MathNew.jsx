@@ -166,9 +166,30 @@ export default function MathNew() {
 
   useEffect(() => {
     const allParams = new Set();
-    const mathFunctions = ['sin', 'cos', 'tan', 'sqrt', 'exp', 'log', 'abs', 'ceil', 
-                          'floor', 'round', 'sign', 'ln', 'asin', 'acos', 'atan', 
-                          'sinh', 'cosh', 'tanh', 'log10', 'cbrt', 'e', 'pi', 'PI'];
+    const mathFunctions = [
+      // Trigonometric
+      'sin', 'cos', 'tan', 'sec', 'csc', 'cot',
+      // Inverse trigonometric
+      'asin', 'acos', 'atan', 'atan2', 'asec', 'acsc', 'acot',
+      // Hyperbolic
+      'sinh', 'cosh', 'tanh', 'sech', 'csch', 'coth',
+      // Inverse hyperbolic
+      'asinh', 'acosh', 'atanh', 'asech', 'acsch', 'acoth',
+      // Logarithms and exponentials
+      'exp', 'log', 'log10', 'log2', 'ln',
+      // Roots
+      'sqrt', 'cbrt', 'nthRoot',
+      // Rounding
+      'abs', 'ceil', 'floor', 'round', 'fix', 'trunc',
+      // Sign and comparison
+      'sign', 'min', 'max',
+      // Number theory
+      'mod', 'gcd', 'lcm', 'factorial', 'gamma',
+      // Constants
+      'e', 'pi', 'PI', 'E', 'i', 'Infinity', 'NaN',
+      // Other
+      'pow', 'random', 'combinations', 'permutations'
+    ];
     
     functions.forEach(func => {
       if (!func.expression.trim()) return;
@@ -178,7 +199,7 @@ export default function MathNew() {
         // Extract single letters that are parameters (not x, y, or math functions)
         const matches = expr.match(/[a-z]/gi) || [];
         matches.forEach(sym => {
-          if (sym !== 'x' && sym !== 'y' && !mathFunctions.includes(sym)) {
+          if (sym !== 'x' && sym !== 'y' && !mathFunctions.includes(sym.toLowerCase())) {
             allParams.add(sym);
           }
         });
@@ -963,7 +984,7 @@ export default function MathNew() {
                       <input
                         type="text"
                         className="flex-1 bg-white border border-gray-300 px-2 py-1 rounded text-sm font-mono focus:outline-none focus:border-blue-400"
-                        placeholder="e.g., |x|, x^2+y<=5, a=(2,3), circle(5)"
+                        placeholder="e.g., max(sin(x),cos(x)), |x|, y<=x^2"
                         value={func.draftExpression !== undefined ? func.draftExpression : func.expression}
                         onChange={(e) => {
                           updateDraftExpression(func.id, e.target.value);
@@ -1004,7 +1025,7 @@ export default function MathNew() {
                       <input
                         type="text"
                         className="flex-1 bg-white border border-gray-300 px-2 py-1 rounded text-sm font-mono focus:outline-none focus:border-blue-400"
-                        placeholder="e.g., |x|, x^2+y<=5, a=(2,3), circle(5)"
+                        placeholder="e.g., max(sin(x),cos(x)), |x|, y<=x^2"
                         onFocus={addFunction}
                       />
                     </div>
