@@ -135,7 +135,7 @@ export default function Documentation() {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-200">
       <Header />
       
       <main className="pt-24 pb-16 px-4">

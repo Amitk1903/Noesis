@@ -51,17 +51,17 @@ export default function Home() {
           <div className="text-center space-y-20 max-w-7xl w-full">
             <div className="space-y-8">
               <div className="inline-block mb-4">
-                <div className="px-4 py-2 rounded-full glass border border-white/10 text-sm text-white/80 tracking-wider">
+                <div className="px-4 py-2 rounded-full glass border border-white/10 dark:border-white/10 border-neutral-300 text-sm text-neutral-700 dark:text-white/80 tracking-wider">
                   Interactive Physics & Math Platform
                 </div>
               </div>
               
               <h1 className="text-8xl md:text-9xl font-bold tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                <GlitchText text="Noesis" className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100" />
+                <GlitchText text="Noesis" className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 via-blue-600 to-purple-600 dark:from-white dark:via-blue-100 dark:to-purple-100" />
               </h1>
               
-              <p className="text-white/70 text-2xl font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
-                Explore the universe through <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-medium">interactive simulations</span> and 
+              <p className="text-neutral-700 dark:text-white/70 text-2xl font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
+                Explore the universe through <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-400 dark:to-purple-400 font-medium">interactive simulations</span> and 
                 discover the beauty of physics in real-time
               </p>
 
@@ -100,8 +100,8 @@ export default function Home() {
                   <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
                     {feature.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                  <p className="text-sm text-white/60">{feature.category}</p>
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">{feature.title}</h3>
+                  <p className="text-sm text-neutral-600 dark:text-white/60">{feature.category}</p>
                 </Link>
               ))}
             </div>
@@ -113,8 +113,8 @@ export default function Home() {
                     ∑
                   </div>
                   <div className="space-y-3">
-                    <h3 className="text-3xl font-semibold text-white title-font">Mathematics</h3>
-                    <p className="text-white/60 leading-relaxed font-light">Explore mathematical concepts, visualizations, and interactive tools for learning and discovery.</p>
+                    <h3 className="text-3xl font-semibold text-neutral-900 dark:text-white title-font">Mathematics</h3>
+                    <p className="text-neutral-700 dark:text-white/60 leading-relaxed font-light">Explore mathematical concepts, visualizations, and interactive tools for learning and discovery.</p>
                   </div>
                   <div className="flex flex-wrap justify-center gap-2 pt-4">
                     <span className="text-xs px-3 py-1.5 rounded-full glass text-white/80 font-medium">Calculus</span>
