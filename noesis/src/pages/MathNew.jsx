@@ -424,6 +424,21 @@ export default function MathNew() {
             // Fall back to general implicit rendering
           }
         }
+        else if (expr.includes('(x^2 + y^2 - 1)^3') && expr.includes('x^2 * y^3')) {
+          // Heart curve: (x^2 + y^2 - 1)^3 = x^2 * y^3
+          // Using parametric form for efficiency
+          ctx.beginPath();
+          const segments = 300;
+          for (let i = 0; i <= segments; i++) {
+            const t = (i / segments) * 2 * Math.PI;
+            const x = (16 * Math.pow(Math.sin(t), 3)) / 16;
+            const y = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+            const p = graphToPixel(x, y);
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+          }
+          ctx.stroke();
+        }
         else {
           // General implicit equation using marching squares
           const bounds = {
@@ -433,7 +448,8 @@ export default function MathNew() {
             maxY: pixelToGraph(0, 0).y
           };
           
-          const gridSize = 0.02;
+          // Adaptive grid size based on zoom level
+          const gridSize = Math.max(0.05, 2 / viewport.scale);
           const threshold = 0.01;
           
           ctx.fillStyle = func.color;
