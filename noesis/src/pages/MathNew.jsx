@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 import { create, all } from 'mathjs';
-import { FiZoomIn, FiZoomOut, FiMaximize2, FiMove, FiCircle, FiSlash, FiMinus } from 'react-icons/fi';
+import { FiZoomIn, FiZoomOut, FiMaximize2, FiMove, FiCircle, FiSlash, FiMinus, FiHome } from 'react-icons/fi';
 
 const math = create(all);
 
@@ -12,12 +12,14 @@ const colors = [
 
 export default function MathNew() {
   const canvasRef = useRef(null);
+  const navigate = useNavigate();
   const [mode, setMode] = useState('select');
   const [objects, setObjects] = useState([]);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [hoveredObject, setHoveredObject] = useState(null);
   const [tempConstruction, setTempConstruction] = useState(null);
   const [functions, setFunctions] = useState([]);
+  const [parameters, setParameters] = useState({});
   const [viewport, setViewport] = useState({ centerX: 0, centerY: 0, scale: 40 });
   const [mousePos, setMousePos] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -54,6 +56,54 @@ export default function MathNew() {
   const pointDistance = (p1, p2) => distance(p1.x, p1.y, p2.x, p2.y);
 
   const getPoint = (id) => objects.find(o => o.id === id && o.type === 'point') || null;
+
+  const evaluateFunction = (expr, x, params) => {
+    try {
+      const scope = { x, ...params };
+      const node = math.parse(expr);
+      const result = node.evaluate(scope);
+      return typeof result === 'number' && isFinite(result) ? result : null;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const allParams = new Set();
+    const mathFunctions = ['sin', 'cos', 'tan', 'sqrt', 'exp', 'log', 'abs', 'ceil', 
+                          'floor', 'round', 'sign', 'ln', 'asin', 'acos', 'atan', 
+                          'sinh', 'cosh', 'tanh', 'log10', 'cbrt', 'e', 'pi', 'PI'];
+    
+    functions.forEach(func => {
+      if (!func.expression.trim()) return;
+      try {
+        const node = math.parse(func.expression);
+        const symbols = node.filter(n => n.isSymbolNode).map(n => n.name);
+        symbols.forEach(sym => {
+          if (sym !== 'x' && sym !== 'y' && !mathFunctions.includes(sym)) {
+            allParams.add(sym);
+          }
+        });
+      } catch (e) {
+        // Ignore parsing errors
+      }
+    });
+
+    setParameters(prev => {
+      const updated = { ...prev };
+      allParams.forEach(param => {
+        if (!(param in updated)) {
+          updated[param] = { value: 1, min: -10, max: 10 };
+        }
+      });
+      Object.keys(updated).forEach(param => {
+        if (!allParams.has(param)) {
+          delete updated[param];
+        }
+      });
+      return updated;
+    });
+  }, [functions]);
 
   const getObjectAtPosition = (px, py, tolerance = 10) => {
     const graphPos = pixelToGraph(px, py);
@@ -253,9 +303,18 @@ export default function MathNew() {
 
   return (
     <div className="h-screen bg-white text-gray-900 flex flex-col">
-      <Header />
       <main className="flex flex-1 overflow-hidden">
         <aside className="w-16 bg-gray-100 border-r border-gray-300 flex flex-col items-center py-4 gap-2">
+          <button
+            onClick={() => navigate('/')}
+            className="p-3 rounded transition text-gray-700 hover:bg-gray-200 mb-4"
+            title="Home"
+          >
+            <FiHome size={20} />
+          </button>
+          
+          <div className="w-10 h-px bg-gray-300 mb-2" />
+          
           <button
             onClick={() => setMode('select')}
             className={`p-3 rounded transition ${mode === 'select' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-200'}`}
