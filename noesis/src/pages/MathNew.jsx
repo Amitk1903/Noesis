@@ -371,6 +371,50 @@ export default function MathNew() {
     }));
   };
 
+  const addPresetFunction = (type) => {
+    const id = nextId.current++;
+    let expressions = [];
+    
+    switch(type) {
+      case 'circle':
+        expressions = [
+          { expr: 'sqrt(r^2 - x^2)', desc: 'Circle (upper)' },
+          { expr: '-sqrt(r^2 - x^2)', desc: 'Circle (lower)' }
+        ];
+        break;
+      case 'ellipse':
+        expressions = [
+          { expr: 'b*sqrt(1 - (x/a)^2)', desc: 'Ellipse (upper)' },
+          { expr: '-b*sqrt(1 - (x/a)^2)', desc: 'Ellipse (lower)' }
+        ];
+        break;
+      case 'hyperbola':
+        expressions = [
+          { expr: 'b*sqrt((x/a)^2 - 1)', desc: 'Hyperbola (upper)' },
+          { expr: '-b*sqrt((x/a)^2 - 1)', desc: 'Hyperbola (lower)' }
+        ];
+        break;
+      case 'parabola':
+        expressions = [{ expr: 'a*x^2', desc: 'Parabola' }];
+        break;
+      case 'sine':
+        expressions = [{ expr: 'a*sin(b*x)', desc: 'Sine wave' }];
+        break;
+      case 'cosine':
+        expressions = [{ expr: 'a*cos(b*x)', desc: 'Cosine wave' }];
+        break;
+    }
+    
+    const newFuncs = expressions.map((e, i) => ({
+      id: nextId.current++,
+      expression: e.expr,
+      visible: true,
+      color: colors[(functions.length + i) % colors.length]
+    }));
+    
+    setFunctions([...functions, ...newFuncs]);
+  };
+
   return (
     <div className="h-screen bg-white text-gray-900 flex flex-col">
       <main className="flex flex-1 overflow-hidden">
@@ -443,6 +487,47 @@ export default function MathNew() {
                     + Add
                   </button>
                 </div>
+
+                {/* Preset Functions */}
+                <div className="mb-3 grid grid-cols-2 gap-1">
+                  <button
+                    onClick={() => addPresetFunction('circle')}
+                    className="text-xs bg-white border border-gray-300 hover:border-blue-400 hover:bg-blue-50 px-2 py-1 rounded transition"
+                  >
+                    ○ Circle
+                  </button>
+                  <button
+                    onClick={() => addPresetFunction('ellipse')}
+                    className="text-xs bg-white border border-gray-300 hover:border-blue-400 hover:bg-blue-50 px-2 py-1 rounded transition"
+                  >
+                    ⬭ Ellipse
+                  </button>
+                  <button
+                    onClick={() => addPresetFunction('hyperbola')}
+                    className="text-xs bg-white border border-gray-300 hover:border-blue-400 hover:bg-blue-50 px-2 py-1 rounded transition"
+                  >
+                    ⟩⟨ Hyperbola
+                  </button>
+                  <button
+                    onClick={() => addPresetFunction('parabola')}
+                    className="text-xs bg-white border border-gray-300 hover:border-blue-400 hover:bg-blue-50 px-2 py-1 rounded transition"
+                  >
+                    ⌒ Parabola
+                  </button>
+                  <button
+                    onClick={() => addPresetFunction('sine')}
+                    className="text-xs bg-white border border-gray-300 hover:border-blue-400 hover:bg-blue-50 px-2 py-1 rounded transition"
+                  >
+                    ∿ Sine
+                  </button>
+                  <button
+                    onClick={() => addPresetFunction('cosine')}
+                    className="text-xs bg-white border border-gray-300 hover:border-blue-400 hover:bg-blue-50 px-2 py-1 rounded transition"
+                  >
+                    ∿ Cosine
+                  </button>
+                </div>
+
                 {functions.length === 0 ? (
                   <p className="text-sm text-gray-400 italic">No functions</p>
                 ) : (
