@@ -120,6 +120,50 @@ export default function MathNew() {
     }
   };
 
+  const evaluateInequality = (expr, x, y, params) => {
+    try {
+      let operator, left, right;
+      
+      if (expr.includes('<=')) {
+        [left, right] = expr.split('<=').map(s => s.trim());
+        operator = '<=';
+      } else if (expr.includes('>=')) {
+        [left, right] = expr.split('>=').map(s => s.trim());
+        operator = '>=';
+      } else if (expr.includes('<')) {
+        [left, right] = expr.split('<').map(s => s.trim());
+        operator = '<';
+      } else if (expr.includes('>')) {
+        [left, right] = expr.split('>').map(s => s.trim());
+        operator = '>';
+      } else {
+        return null;
+      }
+      
+      const scope = { x, y, ...params };
+      const leftVal = math.parse(left).evaluate(scope);
+      const rightVal = math.parse(right).evaluate(scope);
+      
+      if (typeof leftVal !== 'number' || typeof rightVal !== 'number') return null;
+      if (!isFinite(leftVal) || !isFinite(rightVal)) return null;
+      
+      switch (operator) {
+        case '<=':
+          return leftVal <= rightVal;
+        case '>=':
+          return leftVal >= rightVal;
+        case '<':
+          return leftVal < rightVal;
+        case '>':
+          return leftVal > rightVal;
+        default:
+          return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   useEffect(() => {
     const allParams = new Set();
     const mathFunctions = ['sin', 'cos', 'tan', 'sqrt', 'exp', 'log', 'abs', 'ceil', 
@@ -341,13 +385,43 @@ export default function MathNew() {
       };
       const step = (funcBounds.maxX - funcBounds.minX) / w;
 
+      // Check if it's an inequality
+      const isInequality = func.expression.includes('<=') || func.expression.includes('>=') || 
+                          func.expression.includes('<') || func.expression.includes('>');
+      
       // Check if it's an implicit equation
-      const isImplicit = func.expression.includes('=');
+      const isImplicit = func.expression.includes('=') && !isInequality;
 
       ctx.strokeStyle = func.color;
       ctx.lineWidth = 2.5;
 
-      if (isImplicit) {
+      if (isInequality) {
+        // Render inequality as shaded region
+        const expr = func.expression.trim();
+        const bounds = {
+          minX: pixelToGraph(0, 0).x,
+          maxX: pixelToGraph(w, 0).x,
+          minY: pixelToGraph(0, h).y,
+          maxY: pixelToGraph(0, 0).y
+        };
+        
+        const gridSize = Math.max(0.05, 2 / viewport.scale);
+        
+        // Create a semi-transparent fill
+        const rgb = func.color.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [59, 130, 246];
+        ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.15)`;
+        
+        // Sample the inequality on a grid and fill satisfied regions
+        for (let gx = bounds.minX; gx < bounds.maxX; gx += gridSize) {
+          for (let gy = bounds.minY; gy < bounds.maxY; gy += gridSize) {
+            if (evaluateInequality(expr, gx, gy, params)) {
+              const px = graphToPixel(gx, gy);
+              const size = Math.max(2, viewport.scale * gridSize);
+              ctx.fillRect(px.x - size/2, px.y - size/2, size, size);
+            }
+          }
+        }
+      } else if (isImplicit) {
         const expr = func.expression.trim();
         
         // Special cases with parametric equations for perfect shapes
@@ -889,7 +963,7 @@ export default function MathNew() {
                       <input
                         type="text"
                         className="flex-1 bg-white border border-gray-300 px-2 py-1 rounded text-sm font-mono focus:outline-none focus:border-blue-400"
-                        placeholder="e.g., |x|, sin(x), a=(2,3), circle(5) (press Enter)"
+                        placeholder="e.g., |x|, x^2+y<=5, a=(2,3), circle(5)"
                         value={func.draftExpression !== undefined ? func.draftExpression : func.expression}
                         onChange={(e) => {
                           updateDraftExpression(func.id, e.target.value);
@@ -930,7 +1004,7 @@ export default function MathNew() {
                       <input
                         type="text"
                         className="flex-1 bg-white border border-gray-300 px-2 py-1 rounded text-sm font-mono focus:outline-none focus:border-blue-400"
-                        placeholder="e.g., |x|, sin(x), a=(2,3), circle(5) (press Enter)"
+                        placeholder="e.g., |x|, x^2+y<=5, a=(2,3), circle(5)"
                         onFocus={addFunction}
                       />
                     </div>
