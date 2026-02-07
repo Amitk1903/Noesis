@@ -342,6 +342,35 @@ export default function MathNew() {
   const zoomIn = () => setViewport(prev => ({ ...prev, scale: Math.min(200, prev.scale * 1.3) }));
   const zoomOut = () => setViewport(prev => ({ ...prev, scale: Math.max(5, prev.scale / 1.3) }));
 
+  const addFunction = () => {
+    const newId = nextId.current++;
+    setFunctions([...functions, {
+      id: newId,
+      expression: '',
+      visible: true,
+      color: colors[functions.length % colors.length]
+    }]);
+  };
+
+  const updateFunction = (id, expression) => {
+    setFunctions(functions.map(f => f.id === id ? { ...f, expression } : f));
+  };
+
+  const toggleFunction = (id) => {
+    setFunctions(functions.map(f => f.id === id ? { ...f, visible: !f.visible } : f));
+  };
+
+  const removeFunction = (id) => {
+    setFunctions(functions.filter(f => f.id !== id));
+  };
+
+  const updateParameter = (name, field, value) => {
+    setParameters(prev => ({
+      ...prev,
+      [name]: { ...prev[name], [field]: parseFloat(value) }
+    }));
+  };
+
   return (
     <div className="h-screen bg-white text-gray-900 flex flex-col">
       <main className="flex flex-1 overflow-hidden">
