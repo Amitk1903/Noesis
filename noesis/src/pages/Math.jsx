@@ -134,7 +134,7 @@ export default function Math() {
     return pointDistance(p, closest);
   };
 
-  // Canvas drawing
+  // Canvas setup and drawing
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -158,69 +158,7 @@ export default function Math() {
 
   useEffect(() => {
     draw();
-  }, [functions, parameters, viewport, tools, tangentPoint, cursorPoint, redrawTrigger]);
-
-  const pixelToGraph = (px, py) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const gx = (px - canvas.width / 2) / viewport.scale + viewport.centerX;
-    const gy = -(py - canvas.height / 2) / viewport.scale + viewport.centerY;
-    return { x: gx, y: gy };
-  };
-
-  const graphToPixel = (gx, gy) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const px = (gx - viewport.centerX) * viewport.scale + canvas.width / 2;
-    const py = -(gy - viewport.centerY) * viewport.scale + canvas.height / 2;
-    return { x: px, y: py };
-  };
-
-  const evaluateFunction = (expr, x, params) => {
-    try {
-      const scope = { x, ...params };
-      const node = math.parse(expr);
-      const result = node.evaluate(scope);
-      return typeof result === 'number' && isFinite(result) ? result : null;
-    } catch (e) {
-      return null;
-    }
-  };
-
-  const derivative = (expr, x, params, h = 0.0001) => {
-    const y1 = evaluateFunction(expr, x - h, params);
-    const y2 = evaluateFunction(expr, x + h, params);
-    if (y1 === null || y2 === null) return null;
-    return (y2 - y1) / (2 * h);
-  };
-
-  const findCriticalPoints = (expr, params) => {
-    const points = [];
-    const canvas = canvasRef.current;
-    if (!canvas) return points;
-
-    const { x: minX } = pixelToGraph(0, 0);
-    const { x: maxX } = pixelToGraph(canvas.width, 0);
-    const step = (maxX - minX) / 500;
-
-    let prevDeriv = derivative(expr, minX, params);
-    
-    for (let x = minX + step; x <= maxX; x += step) {
-      const deriv = derivative(expr, x, params);
-      if (deriv !== null && prevDeriv !== null) {
-        // Sign change in derivative = critical point
-        if ((prevDeriv > 0 && deriv < 0) || (prevDeriv < 0 && deriv > 0)) {
-          const y = evaluateFunction(expr, x, params);
-          if (y !== null) {
-            points.push({ x, y, type: prevDeriv > 0 ? 'max' : 'min' });
-          }
-        }
-      }
-      prevDeriv = deriv;
-    }
-    
-    return points;
-  };
+  }, [objects, functions, parameters, viewport, showGrid, hoveredObject, selectedObjects, tempConstruction, redrawTrigger]);
 
   const draw = () => {
     const canvas = canvasRef.current;
@@ -233,16 +171,15 @@ export default function Math() {
     const h = canvas.height;
 
     // Clear
-    ctx.fillStyle = '#0a0a0a';
+    ctx.fillStyle = '#fafafa';
     ctx.fillRect(0, 0, w, h);
 
     // Grid
-    if (tools.showGrid) {
-      ctx.strokeStyle = '#1a1a1a';
+    if (showGrid) {
+      ctx.strokeStyle = '#e5e5e5';
       ctx.lineWidth = 1;
       
       const gridSpacing = Math.pow(10, Math.floor(Math.log10(50 / viewport.scale)));
-      const actualSpacing = gridSpacing * viewport.scale;
       
       const { x: minX } = pixelToGraph(0, 0);
       const { x: maxX } = pixelToGraph(w, 0);
@@ -270,50 +207,46 @@ export default function Math() {
     }
 
     // Axes
-    if (tools.showAxes) {
-      const origin = graphToPixel(0, 0);
-      
-      // X-axis
-      ctx.strokeStyle = '#404040';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, origin.y);
-      ctx.lineTo(w, origin.y);
-      ctx.stroke();
-      
-      // Y-axis
-      ctx.beginPath();
-      ctx.moveTo(origin.x, 0);
-      ctx.lineTo(origin.x, h);
-      ctx.stroke();
-      
-      // Axis labels
-      ctx.fillStyle = '#737373';
-      ctx.font = '12px monospace';
-      ctx.textAlign = 'center';
-      
-      const { x: minX } = pixelToGraph(0, 0);
-      const { x: maxX } = pixelToGraph(w, 0);
-      const labelSpacing = Math.pow(10, Math.floor(Math.log10((maxX - minX) / 10)));
-      
-      for (let x = Math.ceil(minX / labelSpacing) * labelSpacing; x <= maxX; x += labelSpacing) {
-        if (Math.abs(x) < labelSpacing / 2) continue;
-        const px = graphToPixel(x, 0).x;
-        ctx.fillText(x.toFixed(1), px, origin.y + 15);
-      }
-      
-      ctx.textAlign = 'right';
-      const { y: minY } = pixelToGraph(0, h);
-      const { y: maxY } = pixelToGraph(0, 0);
-      
-      for (let y = Math.ceil(minY / labelSpacing) * labelSpacing; y <= maxY; y += labelSpacing) {
-        if (Math.abs(y) < labelSpacing / 2) continue;
-        const py = graphToPixel(0, y).y;
-        ctx.fillText(y.toFixed(1), origin.x - 10, py + 4);
-      }
+    const origin = graphToPixel(0, 0);
+    
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, origin.y);
+    ctx.lineTo(w, origin.y);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(origin.x, 0);
+    ctx.lineTo(origin.x, h);
+    ctx.stroke();
+    
+    // Axis labels
+    ctx.fillStyle = '#888';
+    ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    
+    const { x: minX } = pixelToGraph(0, 0);
+    const { x: maxX } = pixelToGraph(w, 0);
+    const labelSpacing = Math.pow(10, Math.floor(Math.log10((maxX - minX) / 10)));
+    
+    for (let x = Math.ceil(minX / labelSpacing) * labelSpacing; x <= maxX; x += labelSpacing) {
+      if (Math.abs(x) < labelSpacing / 2) continue;
+      const px = graphToPixel(x, 0).x;
+      ctx.fillText(x.toFixed(labelSpacing < 1 ? 1 : 0), px, origin.y + 15);
+    }
+    
+    ctx.textAlign = 'right';
+    const { y: minY } = pixelToGraph(0, h);
+    const { y: maxY } = pixelToGraph(0, 0);
+    
+    for (let y = Math.ceil(minY / labelSpacing) * labelSpacing; y <= maxY; y += labelSpacing) {
+      if (Math.abs(y) < labelSpacing / 2) continue;
+      const py = graphToPixel(0, y).y;
+      ctx.fillText(y.toFixed(labelSpacing < 1 ? 1 : 0), origin.x - 8, py + 4);
     }
 
-    // Plot functions
+    // Draw functions
     const params = {};
     Object.keys(parameters).forEach(key => {
       params[key] = parameters[key].value;
@@ -326,16 +259,19 @@ export default function Math() {
       const { x: maxX } = pixelToGraph(w, 0);
       const step = (maxX - minX) / w;
 
-      // Plot main function
-      ctx.strokeStyle = func.color.main;
-      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = func.color;
+      ctx.lineWidth = 2;
       ctx.beginPath();
       
       let started = false;
       for (let x = minX; x <= maxX; x += step) {
         const y = evaluateFunction(func.expression, x, params);
-        if (y !== null) {
+        if (y !== null && isFinite(y)) {
           const p = graphToPixel(x, y);
+          if (p.y < -100 || p.y > h + 100) {
+            started = false;
+            continue;
+          }
           if (!started) {
             ctx.moveTo(p.x, p.y);
             started = true;
@@ -347,144 +283,185 @@ export default function Math() {
         }
       }
       ctx.stroke();
+    });
 
-      // Plot derivative
-      if (tools.showDerivative && func.id === selectedFunction) {
-        ctx.strokeStyle = func.color.light;
+    // Draw geometric objects
+    objects.forEach(obj => {
+      if (!obj.visible) return;
+      
+      const isSelected = selectedObjects.includes(obj.id);
+      const isHovered = hoveredObject === obj.id;
+      
+      if (obj.type === 'point') {
+        const p = graphToPixel(obj.x, obj.y);
+        ctx.fillStyle = isSelected ? '#2563eb' : isHovered ? '#60a5fa' : obj.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, isSelected || isHovered ? 6 : 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Label
+        if (obj.label) {
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(obj.label, p.x + 10, p.y - 10);
+        }
+      } else if (obj.type === 'line' || obj.type === 'segment') {
+        const p1 = getPoint(obj.p1);
+        const p2 = getPoint(obj.p2);
+        if (!p1 || !p2) return;
+        
+        ctx.strokeStyle = isSelected ? '#2563eb' : isHovered ? '#60a5fa' : obj.color;
+        ctx.lineWidth = isSelected || isHovered ? 3 : 2;
+        ctx.beginPath();
+        
+        if (obj.type === 'line') {
+          // Extend to canvas edges
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          if (len === 0) return;
+          
+          const dirX = dx / len;
+          const dirY = dy / len;
+          const ext = Math.max(w, h) * 2;
+          
+          const start = graphToPixel(p1.x - dirX * ext, p1.y - dirY * ext);
+          const end = graphToPixel(p1.x + dirX * ext, p1.y + dirY * ext);
+          
+          ctx.moveTo(start.x, start.y);
+          ctx.lineTo(end.x, end.y);
+        } else {
+          const start = graphToPixel(p1.x, p1.y);
+          const end = graphToPixel(p2.x, p2.y);
+          ctx.moveTo(start.x, start.y);
+          ctx.lineTo(end.x, end.y);
+        }
+        ctx.stroke();
+        
+        if (obj.label) {
+          const mid = graphToPixel((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          ctx.fillText(obj.label, mid.x + 5, mid.y - 5);
+        }
+      } else if (obj.type === 'circle') {
+        const center = getPoint(obj.center);
+        if (!center) return;
+        
+        const centerPx = graphToPixel(center.x, center.y);
+        const radiusPx = obj.radius * viewport.scale;
+        
+        ctx.strokeStyle = isSelected ? '#2563eb' : isHovered ? '#60a5fa' : obj.color;
+        ctx.lineWidth = isSelected || isHovered ? 3 : 2;
+        ctx.beginPath();
+        ctx.arc(centerPx.x, centerPx.y, radiusPx, 0, 2 * Math.PI);
+        ctx.stroke();
+        
+        if (obj.label) {
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          ctx.fillText(obj.label, centerPx.x + radiusPx + 5, centerPx.y);
+        }
+      } else if (obj.type === 'polygon') {
+        if (obj.points.length < 2) return;
+        
+        ctx.strokeStyle = isSelected ? '#2563eb' : isHovered ? '#60a5fa' : obj.color;
+        ctx.fillStyle = obj.color + '20';
+        ctx.lineWidth = isSelected || isHovered ? 3 : 2;
+        ctx.beginPath();
+        
+        obj.points.forEach((pid, i) => {
+          const p = getPoint(pid);
+          if (!p) return;
+          const px = graphToPixel(p.x, p.y);
+          if (i === 0) {
+            ctx.moveTo(px.x, px.y);
+          } else {
+            ctx.lineTo(px.x, px.y);
+          }
+        });
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      } else if (obj.type === 'distance') {
+        const p1 = getPoint(obj.p1);
+        const p2 = getPoint(obj.p2);
+        if (!p1 || !p2) return;
+        
+        const start = graphToPixel(p1.x, p1.y);
+        const end = graphToPixel(p2.x, p2.y);
+        const mid = { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
+        
+        ctx.strokeStyle = obj.color;
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
         ctx.beginPath();
-        
-        started = false;
-        for (let x = minX; x <= maxX; x += step) {
-          const dy = derivative(func.expression, x, params);
-          if (dy !== null) {
-            const p = graphToPixel(x, dy);
-            if (!started) {
-              ctx.moveTo(p.x, p.y);
-              started = true;
-            } else {
-              ctx.lineTo(p.x, p.y);
-            }
-          } else {
-            started = false;
-          }
-        }
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
         ctx.stroke();
         ctx.setLineDash([]);
-      }
-
-      // Plot integral (area under curve)
-      if (tools.showIntegral && func.id === selectedFunction && cursorPoint) {
-        ctx.fillStyle = func.color.main + '30';
-        ctx.beginPath();
         
-        const startX = Math.min(0, cursorPoint.x);
-        const endX = Math.max(0, cursorPoint.x);
-        const integralStep = (endX - startX) / 100;
-        
-        const startP = graphToPixel(startX, 0);
-        ctx.moveTo(startP.x, startP.y);
-        
-        for (let x = startX; x <= endX; x += integralStep) {
-          const y = evaluateFunction(func.expression, x, params);
-          if (y !== null) {
-            const p = graphToPixel(x, y);
-            ctx.lineTo(p.x, p.y);
-          }
-        }
-        
-        const endP = graphToPixel(endX, 0);
-        ctx.lineTo(endP.x, endP.y);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      // Show critical points
-      if (tools.showCriticalPoints && func.id === selectedFunction) {
-        const criticalPoints = findCriticalPoints(func.expression, params);
-        criticalPoints.forEach(point => {
-          const p = graphToPixel(point.x, point.y);
-          ctx.fillStyle = point.type === 'max' ? '#22c55e' : '#ef4444';
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 6, 0, 2 * Math.PI);
-          ctx.fill();
-          ctx.strokeStyle = '#fff';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-        });
+        const dist = pointDistance(p1, p2);
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(dist.toFixed(2), mid.x, mid.y - 8);
       }
     });
 
-    // Draw tangent line
-    if (tools.showTangent && tangentPoint && selectedFunction) {
-      const func = functions.find(f => f.id === selectedFunction);
-      if (func) {
-        const slope = derivative(func.expression, tangentPoint.x, params);
-        if (slope !== null) {
-          const y0 = evaluateFunction(func.expression, tangentPoint.x, params);
-          if (y0 !== null) {
-            const { x: minX } = pixelToGraph(0, 0);
-            const { x: maxX } = pixelToGraph(w, 0);
-            
-            const y1 = slope * (minX - tangentPoint.x) + y0;
-            const y2 = slope * (maxX - tangentPoint.x) + y0;
-            
-            const p1 = graphToPixel(minX, y1);
-            const p2 = graphToPixel(maxX, y2);
-            
-            ctx.strokeStyle = '#fbbf24';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([10, 5]);
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            // Point on curve
-            const p = graphToPixel(tangentPoint.x, y0);
-            ctx.fillStyle = '#fbbf24';
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
-            ctx.fill();
-          }
+    // Draw temporary construction
+    if (tempConstruction && mousePos) {
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 3]);
+      
+      if (tempConstruction.type === 'line' && tempConstruction.p1) {
+        const p1 = getPoint(tempConstruction.p1);
+        if (p1) {
+          const start = graphToPixel(p1.x, p1.y);
+          ctx.beginPath();
+          ctx.moveTo(start.x, start.y);
+          ctx.lineTo(mousePos.px, mousePos.py);
+          ctx.stroke();
+        }
+      } else if (tempConstruction.type === 'circle' && tempConstruction.center) {
+        const center = getPoint(tempConstruction.center);
+        if (center) {
+          const centerPx = graphToPixel(center.x, center.y);
+          const graphMouse = pixelToGraph(mousePos.px, mousePos.py);
+          const radius = pointDistance(center, graphMouse);
+          const radiusPx = radius * viewport.scale;
+          ctx.beginPath();
+          ctx.arc(centerPx.x, centerPx.y, radiusPx, 0, 2 * Math.PI);
+          ctx.stroke();
         }
       }
+      
+      ctx.setLineDash([]);
     }
 
-    // Draw cursor point
-    if (cursorPoint && selectedFunction) {
-      const func = functions.find(f => f.id === selectedFunction);
-      if (func) {
-        const y = evaluateFunction(func.expression, cursorPoint.x, params);
-        if (y !== null) {
-          const p = graphToPixel(cursorPoint.x, y);
-          
-          // Crosshair
-          ctx.strokeStyle = '#ffffff40';
-          ctx.lineWidth = 1;
-          ctx.setLineDash([3, 3]);
-          ctx.beginPath();
-          ctx.moveTo(p.x, 0);
-          ctx.lineTo(p.x, h);
-          ctx.moveTo(0, p.y);
-          ctx.lineTo(w, p.y);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          
-          // Point
-          ctx.fillStyle = func.color.main;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 4, 0, 2 * Math.PI);
-          ctx.fill();
-          
-          // Label
-          ctx.fillStyle = '#fff';
-          ctx.font = 'bold 12px monospace';
-          ctx.fillText(`(${cursorPoint.x.toFixed(2)}, ${y.toFixed(2)})`, p.x + 10, p.y - 10);
-        }
-      }
+    // Draw mode cursor
+    if (mousePos && mode === 'point') {
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(mousePos.px, mousePos.py, 5, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+  };
+
+  const evaluateFunction = (expr, x, params) => {
+    try {
+      const scope = { x, ...params };
+      const node = math.parse(expr);
+      const result = node.evaluate(scope);
+      return typeof result === 'number' && isFinite(result) ? result : null;
+    } catch (e) {
+      return null;
     }
   };
 
@@ -498,41 +475,203 @@ export default function Math() {
     setMousePos({ px, py });
     
     if (isDragging && dragStart) {
-      const dx = (px - dragStart.px) / viewport.scale;
-      const dy = -(py - dragStart.py) / viewport.scale;
-      setViewport(prev => ({
-        ...prev,
-        centerX: dragStart.centerX - dx,
-        centerY: dragStart.centerY - dy
-      }));
-    } else if (selectedFunction) {
-      const graphPos = pixelToGraph(px, py);
-      setCursorPoint(graphPos);
+      if (draggedObject) {
+        // Dragging an object (point)
+        const obj = objects.find(o => o.id === draggedObject);
+        if (obj && obj.type === 'point') {
+          const graphPos = pixelToGraph(px, py);
+          setObjects(objects.map(o => 
+            o.id === draggedObject 
+              ? { ...o, x: snap(graphPos.x), y: snap(graphPos.y) }
+              : o
+          ));
+        }
+      } else {
+        // Panning viewport
+        const dx = (px - dragStart.px) / viewport.scale;
+        const dy = -(py - dragStart.py) / viewport.scale;
+        setViewport(prev => ({
+          ...prev,
+          centerX: dragStart.centerX - dx,
+          centerY: dragStart.centerY - dy
+        }));
+      }
+    } else {
+      // Hover detection
+      const hoveredObj = getObjectAtPosition(px, py);
+      setHoveredObject(hoveredObj ? hoveredObj.id : null);
     }
   };
 
   const handleMouseDown = (e) => {
-    if (e.button === 0 && e.shiftKey) {
-      // Shift+click for tangent
-      if (selectedFunction && cursorPoint) {
-        setTangentPoint(cursorPoint);
+    if (e.button !== 0) return;
+    
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const graphPos = pixelToGraph(px, py);
+    
+    // Check if clicking on an existing object
+    const clickedObj = getObjectAtPosition(px, py);
+    
+    if (mode === 'select') {
+      if (clickedObj) {
+        if (e.shiftKey) {
+          // Multi-select
+          setSelectedObjects(prev => 
+            prev.includes(clickedObj.id)
+              ? prev.filter(id => id !== clickedObj.id)
+              : [...prev, clickedObj.id]
+          );
+        } else {
+          if (!selectedObjects.includes(clickedObj.id)) {
+            setSelectedObjects([clickedObj.id]);
+          }
+          
+          // Start dragging if it's a point
+          if (clickedObj.type === 'point') {
+            setIsDragging(true);
+            setDraggedObject(clickedObj.id);
+            setDragStart({ px, py, centerX: viewport.centerX, centerY: viewport.centerY });
+          }
+        }
+      } else {
+        // Clicked empty space - start panning
+        setSelectedObjects([]);
+        setIsDragging(true);
+        setDragStart({ px, py, centerX: viewport.centerX, centerY: viewport.centerY });
       }
-    } else if (e.button === 1 || (e.button === 0 && e.ctrlKey)) {
-      // Middle click or Ctrl+click to pan
-      const canvas = canvasRef.current;
-      const rect = canvas.getBoundingClientRect();
-      setIsDragging(true);
-      setDragStart({
-        px: e.clientX - rect.left,
-        py: e.clientY - rect.top,
-        centerX: viewport.centerX,
-        centerY: viewport.centerY
-      });
+    } else if (mode === 'point') {
+      // Create point
+      const id = nextId.current++;
+      const newPoint = {
+        id,
+        type: 'point',
+        x: snap(graphPos.x),
+        y: snap(graphPos.y),
+        label: String.fromCharCode(64 + id),
+        color: colors[objects.filter(o => o.type === 'point').length % colors.length],
+        visible: true
+      };
+      setObjects([...objects, newPoint]);
+    } else if (mode === 'line' || mode === 'segment') {
+      if (!tempConstruction) {
+        // First click - select start point
+        if (clickedObj && clickedObj.type === 'point') {
+          setTempConstruction({ type: mode, p1: clickedObj.id });
+        } else {
+          // Create point at click location
+          const id = nextId.current++;
+          const newPoint = {
+            id,
+            type: 'point',
+            x: snap(graphPos.x),
+            y: snap(graphPos.y),
+            label: String.fromCharCode(64 + id),
+            color: colors[objects.filter(o => o.type === 'point').length % colors.length],
+            visible: true
+          };
+          setObjects(prev => [...prev, newPoint]);
+          setTempConstruction({ type: mode, p1: id });
+        }
+      } else {
+        // Second click - create line/segment
+        let p2Id;
+        if (clickedObj && clickedObj.type === 'point') {
+          p2Id = clickedObj.id;
+        } else {
+          const id = nextId.current++;
+          const newPoint = {
+            id,
+            type: 'point',
+            x: snap(graphPos.x),
+            y: snap(graphPos.y),
+            label: String.fromCharCode(64 + id),
+            color: colors[objects.filter(o => o.type === 'point').length % colors.length],
+            visible: true
+          };
+          setObjects(prev => [...prev, newPoint]);
+          p2Id = id;
+        }
+        
+        const id = nextId.current++;
+        const newLine = {
+          id,
+          type: mode,
+          p1: tempConstruction.p1,
+          p2: p2Id,
+          label: mode === 'line' ? 'l' : 's',
+          color: colors[id % colors.length],
+          visible: true
+        };
+        setObjects(prev => [...prev, newLine]);
+        setTempConstruction(null);
+      }
+    } else if (mode === 'circle') {
+      if (!tempConstruction) {
+        // First click - select center
+        if (clickedObj && clickedObj.type === 'point') {
+          setTempConstruction({ type: 'circle', center: clickedObj.id });
+        } else {
+          const id = nextId.current++;
+          const newPoint = {
+            id,
+            type: 'point',
+            x: snap(graphPos.x),
+            y: snap(graphPos.y),
+            label: String.fromCharCode(64 + id),
+            color: colors[objects.filter(o => o.type === 'point').length % colors.length],
+            visible: true
+          };
+          setObjects(prev => [...prev, newPoint]);
+          setTempConstruction({ type: 'circle', center: id });
+        }
+      } else {
+        // Second click - create circle
+        const center = getPoint(tempConstruction.center);
+        if (center) {
+          const radius = pointDistance(center, graphPos);
+          const id = nextId.current++;
+          const newCircle = {
+            id,
+            type: 'circle',
+            center: tempConstruction.center,
+            radius,
+            label: 'c',
+            color: colors[id % colors.length],
+            visible: true
+          };
+          setObjects(prev => [...prev, newCircle]);
+          setTempConstruction(null);
+        }
+      }
+    } else if (mode === 'distance') {
+      if (!tempConstruction) {
+        if (clickedObj && clickedObj.type === 'point') {
+          setTempConstruction({ type: 'distance', p1: clickedObj.id });
+        }
+      } else {
+        if (clickedObj && clickedObj.type === 'point' && clickedObj.id !== tempConstruction.p1) {
+          const id = nextId.current++;
+          const newDist = {
+            id,
+            type: 'distance',
+            p1: tempConstruction.p1,
+            p2: clickedObj.id,
+            color: colors[id % colors.length],
+            visible: true
+          };
+          setObjects(prev => [...prev, newDist]);
+        }
+        setTempConstruction(null);
+      }
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    setDraggedObject(null);
     setDragStart(null);
   };
 
@@ -541,18 +680,55 @@ export default function Math() {
     const factor = e.deltaY > 0 ? 0.9 : 1.1;
     setViewport(prev => ({
       ...prev,
-      scale: Math.max(1, Math.min(200, prev.scale * factor))
+      scale: Math.max(5, Math.min(200, prev.scale * factor))
     }));
   };
 
   const handleMouseLeave = () => {
-    setCursorPoint(null);
-    setIsDragging(false);
+    setHoveredObject(null);
+    setMousePos(null);
   };
 
-  // Function management
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setTempConstruction(null);
+      setMode('select');
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (selectedObjects.length > 0) {
+        // Remove selected objects and dependent objects
+        const toRemove = new Set(selectedObjects);
+        
+        // Find dependent objects
+        objects.forEach(obj => {
+          if (obj.type === 'line' || obj.type === 'segment' || obj.type === 'distance') {
+            if (toRemove.has(obj.p1) || toRemove.has(obj.p2)) {
+              toRemove.add(obj.id);
+            }
+          } else if (obj.type === 'circle') {
+            if (toRemove.has(obj.center)) {
+              toRemove.add(obj.id);
+            }
+          } else if (obj.type === 'polygon') {
+            if (obj.points.some(pid => toRemove.has(pid))) {
+              toRemove.add(obj.id);
+            }
+          }
+        });
+        
+        setObjects(objects.filter(o => !toRemove.has(o.id)));
+        setSelectedObjects([]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedObjects, objects]);
+
+  // Utility functions
   const addFunction = () => {
-    const newId = Math.max(0, ...functions.map(f => f.id)) + 1;
+    const newId = nextId.current++;
     setFunctions([...functions, {
       id: newId,
       expression: '',
@@ -567,25 +743,10 @@ export default function Math() {
     ));
   };
 
-  const toggleFunction = (id) => {
-    setFunctions(functions.map(f => 
-      f.id === id ? { ...f, visible: !f.visible } : f
+  const toggleVisibility = (id) => {
+    setObjects(objects.map(obj =>
+      obj.id === id ? { ...obj, visible: !obj.visible } : obj
     ));
-  };
-
-  const removeFunction = (id) => {
-    setFunctions(functions.filter(f => f.id !== id));
-    if (selectedFunction === id) {
-      setSelectedFunction(null);
-      setTangentPoint(null);
-    }
-  };
-
-  const updateParameter = (name, field, value) => {
-    setParameters(prev => ({
-      ...prev,
-      [name]: { ...prev[name], [field]: parseFloat(value) }
-    }));
   };
 
   const resetView = () => {
@@ -593,11 +754,45 @@ export default function Math() {
   };
 
   const zoomIn = () => {
-    setViewport(prev => ({ ...prev, scale: Math.min(200, prev.scale * 1.2) }));
+    setViewport(prev => ({ ...prev, scale: Math.min(200, prev.scale * 1.3) }));
   };
 
   const zoomOut = () => {
-    setViewport(prev => ({ ...prev, scale: Math.max(1, prev.scale / 1.2) }));
+    setViewport(prev => ({ ...prev, scale: Math.max(5, prev.scale / 1.3) }));
+  };
+
+  const clearAll = () => {
+    if (confirm('Clear all objects?')) {
+      setObjects([]);
+      setSelectedObjects([]);
+      setTempConstruction(null);
+    }
+  };
+
+  const getObjectDescription = (obj) => {
+    if (obj.type === 'point') {
+      return `(${obj.x.toFixed(2)}, ${obj.y.toFixed(2)})`;
+    } else if (obj.type === 'line') {
+      return `Line through ${getPoint(obj.p1)?.label || ''} and ${getPoint(obj.p2)?.label || ''}`;
+    } else if (obj.type === 'segment') {
+      const p1 = getPoint(obj.p1);
+      const p2 = getPoint(obj.p2);
+      if (p1 && p2) {
+        const dist = pointDistance(p1, p2);
+        return `Segment, length = ${dist.toFixed(2)}`;
+      }
+      return 'Segment';
+    } else if (obj.type === 'circle') {
+      return `Circle, r = ${obj.radius.toFixed(2)}`;
+    } else if (obj.type === 'distance') {
+      const p1 = getPoint(obj.p1);
+      const p2 = getPoint(obj.p2);
+      if (p1 && p2) {
+        return `Distance = ${pointDistance(p1, p2).toFixed(2)}`;
+      }
+      return 'Distance';
+    }
+    return obj.type;
   };
 
   return (
