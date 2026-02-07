@@ -30,6 +30,7 @@ export default function MathNew() {
   const [snapToGrid, setSnapToGrid] = useState(false);
   const [showShapesMenu, setShowShapesMenu] = useState(false);
   const [showSliders, setShowSliders] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const nextId = useRef(1);
 
   const pixelToGraph = (px, py) => {
@@ -265,7 +266,7 @@ export default function MathNew() {
 
   useEffect(() => {
     draw();
-  }, [objects, functions, parameters, viewport, showGrid, hoveredObject, selectedObjects, tempConstruction]);
+  }, [objects, functions, parameters, viewport, showGrid, hoveredObject, selectedObjects, tempConstruction, darkMode]);
 
   const draw = () => {
     const canvas = canvasRef.current;
@@ -275,11 +276,17 @@ export default function MathNew() {
     const w = canvas.width;
     const h = canvas.height;
 
-    ctx.fillStyle = '#fafafa';
+    // Theme colors
+    const bgColor = darkMode ? '#1a1a1a' : '#fafafa';
+    const gridColor = darkMode ? '#2a2a2a' : '#e5e5e5';
+    const axisColor = darkMode ? '#888' : '#666';
+    const textColor = darkMode ? '#aaa' : '#666';
+
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, w, h);
 
     if (showGrid) {
-      ctx.strokeStyle = '#e5e5e5';
+      ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
       const gridSpacing = Math.pow(10, Math.floor(Math.log10(50 / viewport.scale)));
       const bounds = {
@@ -307,7 +314,7 @@ export default function MathNew() {
     }
 
     const origin = graphToPixel(0, 0);
-    ctx.strokeStyle = '#666';
+    ctx.strokeStyle = axisColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, origin.y);
@@ -327,7 +334,7 @@ export default function MathNew() {
     const startX = Math.floor(bounds.minX / gridSpacing) * gridSpacing;
     const startY = Math.floor(bounds.minY / gridSpacing) * gridSpacing;
     
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = textColor;
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
@@ -338,7 +345,7 @@ export default function MathNew() {
       const px = graphToPixel(x, 0).x;
       const py = origin.y;
       // Tick mark
-      ctx.strokeStyle = '#666';
+      ctx.strokeStyle = axisColor;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(px, py - 5);
@@ -357,7 +364,7 @@ export default function MathNew() {
       const px = origin.x;
       const py = graphToPixel(0, y).y;
       // Tick mark
-      ctx.strokeStyle = '#666';
+      ctx.strokeStyle = axisColor;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(px - 5, py);
@@ -848,7 +855,7 @@ export default function MathNew() {
   };
 
   return (
-    <div className="h-screen bg-white text-gray-900 flex flex-col">
+    <div className={`h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'} text-gray-900 flex flex-col`}>
       <main className="flex flex-1 overflow-hidden">
         <aside className="w-16 bg-gray-100 border-r border-gray-300 flex flex-col items-center py-4 gap-2 relative">
           <button
@@ -1108,6 +1115,22 @@ export default function MathNew() {
               <input type="checkbox" checked={showGrid} onChange={(e) => setShowGrid(e.target.checked)} className="w-4 h-4" />
               Grid
             </label>
+            <button 
+              onClick={() => setDarkMode(!darkMode)} 
+              className="bg-white border px-3 py-2 rounded shadow-sm hover:bg-gray-50 text-sm flex items-center gap-2"
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {darkMode ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+              {darkMode ? 'Light' : 'Dark'}
+            </button>
           </div>
 
           <canvas
