@@ -857,16 +857,16 @@ export default function MathNew() {
   return (
     <div className={`h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'} text-gray-900 flex flex-col`}>
       <main className="flex flex-1 overflow-hidden">
-        <aside className="w-16 bg-gray-100 border-r border-gray-300 flex flex-col items-center py-4 gap-2 relative">
+        <aside className={`w-16 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-300'} border-r flex flex-col items-center py-4 gap-2 relative`}>
           <button
             onClick={() => navigate('/')}
-            className="p-3 rounded transition text-gray-700 hover:bg-gray-200 mb-4"
+            className={`p-3 rounded transition ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-200'} mb-4`}
             title="Home"
           >
             <FiHome size={20} />
           </button>
           
-          <div className="w-10 h-px bg-gray-300 mb-2" />
+          <div className={`w-10 h-px ${darkMode ? 'bg-gray-700' : 'bg-gray-300'} mb-2`} />
           
           <button
             onClick={() => setMode('select')}
