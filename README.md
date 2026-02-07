@@ -15,11 +15,17 @@
 
 ## 🌌 What is Noesis?
 
-Ever wished you could **see** physics concepts come alive instead of just reading about them in dusty textbooks? That's exactly what Noesis does.
+Ever wished you could **see** maths and physics concepts come alive instead of just reading about them in dusty textbooks? That's exactly what Noesis does.
 
 Noesis is an interactive physics and mathematics visualization platform where abstract concepts transform into tangible, playable experiences. Whether you're a student trying to understand projectile motion, a teacher looking for engaging demonstrations, or just someone curious about how the universe works—Noesis makes learning physics feel less like homework and more like exploration.
 
 Think of it as your personal physics laboratory, minus the broken beakers and safety goggles.
+
+## Cool Graphs
+
+<img width="1850" height="972" alt="image" src="https://github.com/user-attachments/assets/b4780444-3aec-4cc9-a5ec-b433902fd308" />
+> sin(x^2 + y^2) = cos(x*y)
+
 
 ## ✨ Why Noesis?
 
