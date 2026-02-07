@@ -274,6 +274,7 @@ export default function Pendulum() {
     <div className="min-h-screen bg-neutral-950 text-neutral-200">
       <Header />
       
+      
       <main className="pt-20 pb-10 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">
