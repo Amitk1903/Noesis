@@ -543,29 +543,68 @@ export default function MathNew() {
             maxY: pixelToGraph(0, 0).y
           };
           
-          // Adaptive grid size based on zoom level
-          const gridSize = Math.max(0.05, 2 / viewport.scale);
-          const threshold = 0.01;
+          // Adaptive grid size - balance between performance and quality
+          const gridSize = Math.max(0.08, 3 / viewport.scale);
+          const threshold = 0.1;
           
           ctx.fillStyle = func.color;
           
-          // Sample the implicit function on a grid
-          for (let gx = bounds.minX; gx < bounds.maxX; gx += gridSize) {
-            for (let gy = bounds.minY; gy < bounds.maxY; gy += gridSize) {
-              const v00 = evaluateImplicit(expr, gx, gy, params);
-              const v10 = evaluateImplicit(expr, gx + gridSize, gy, params);
-              const v01 = evaluateImplicit(expr, gx, gy + gridSize, params);
-              const v11 = evaluateImplicit(expr, gx + gridSize, gy + gridSize, params);
-              
-              if (v00 === null || v10 === null || v01 === null || v11 === null) continue;
-              
-              // Check if the cell contains a zero crossing
-              const signs = [v00, v10, v01, v11].map(v => Math.sign(v));
-              const hasZeroCrossing = signs.some((s, i) => signs.some((s2, j) => i !== j && s !== s2));
-              
-              if (hasZeroCrossing || Math.abs(v00) < threshold) {
-                const px = graphToPixel(gx + gridSize/2, gy + gridSize/2);
-                ctx.fillRect(px.x - 1, px.y - 1, 2, 2);
+          // Calculate max iterations with a more generous limit
+          const maxCells = 50000; // Increased limit for better coverage
+          const xCells = Math.ceil((bounds.maxX - bounds.minX) / gridSize);
+          const yCells = Math.ceil((bounds.maxY - bounds.minY) / gridSize);
+          const totalCells = xCells * yCells;
+          
+          if (totalCells > maxCells) {
+            // Adjust grid size to fit within limit
+            const adjustedGridSize = Math.sqrt((bounds.maxX - bounds.minX) * (bounds.maxY - bounds.minY) / maxCells);
+            const adjustedXCells = Math.ceil((bounds.maxX - bounds.minX) / adjustedGridSize);
+            const adjustedYCells = Math.ceil((bounds.maxY - bounds.minY) / adjustedGridSize);
+            
+            let cellsProcessed = 0;
+            for (let gx = bounds.minX; gx < bounds.maxX; gx += adjustedGridSize) {
+              for (let gy = bounds.minY; gy < bounds.maxY; gy += adjustedGridSize) {
+                if (cellsProcessed++ > maxCells) break;
+                
+                const v00 = evaluateImplicit(expr, gx, gy, params);
+                const v10 = evaluateImplicit(expr, gx + adjustedGridSize, gy, params);
+                const v01 = evaluateImplicit(expr, gx, gy + adjustedGridSize, params);
+                const v11 = evaluateImplicit(expr, gx + adjustedGridSize, gy + adjustedGridSize, params);
+                
+                if (v00 === null || v10 === null || v01 === null || v11 === null) continue;
+                
+                const signs = [v00, v10, v01, v11].map(v => Math.sign(v));
+                const hasZeroCrossing = signs.some((s, i) => signs.some((s2, j) => i !== j && s !== s2));
+                
+                if (hasZeroCrossing || Math.abs(v00) < threshold || Math.abs(v10) < threshold || 
+                    Math.abs(v01) < threshold || Math.abs(v11) < threshold) {
+                  const px = graphToPixel(gx + adjustedGridSize/2, gy + adjustedGridSize/2);
+                  const size = Math.max(3, Math.ceil(viewport.scale * adjustedGridSize / 1.5));
+                  ctx.fillRect(px.x - size/2, px.y - size/2, size, size);
+                }
+              }
+              if (cellsProcessed > maxCells) break;
+            }
+          } else {
+            // Normal rendering within limits
+            for (let gx = bounds.minX; gx < bounds.maxX; gx += gridSize) {
+              for (let gy = bounds.minY; gy < bounds.maxY; gy += gridSize) {
+                const v00 = evaluateImplicit(expr, gx, gy, params);
+                const v10 = evaluateImplicit(expr, gx + gridSize, gy, params);
+                const v01 = evaluateImplicit(expr, gx, gy + gridSize, params);
+                const v11 = evaluateImplicit(expr, gx + gridSize, gy + gridSize, params);
+                
+                if (v00 === null || v10 === null || v01 === null || v11 === null) continue;
+                
+                const signs = [v00, v10, v01, v11].map(v => Math.sign(v));
+                const hasZeroCrossing = signs.some((s, i) => signs.some((s2, j) => i !== j && s !== s2));
+                
+                if (hasZeroCrossing || Math.abs(v00) < threshold || Math.abs(v10) < threshold || 
+                    Math.abs(v01) < threshold || Math.abs(v11) < threshold) {
+                  const px = graphToPixel(gx + gridSize/2, gy + gridSize/2);
+                  const size = Math.max(3, Math.ceil(viewport.scale * gridSize / 1.5));
+                  ctx.fillRect(px.x - size/2, px.y - size/2, size, size);
+                }
               }
             }
           }
