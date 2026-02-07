@@ -930,7 +930,7 @@ export default function MathNew() {
                       <input
                         type="text"
                         className="flex-1 bg-white border border-gray-300 px-2 py-1 rounded text-sm font-mono focus:outline-none focus:border-blue-400"
-                        placeholder="e.g., a=(2,3), sin(x), circle(5), heart (press Enter)"
+                        placeholder="e.g., |x|, sin(x), a=(2,3), circle(5) (press Enter)"
                         onFocus={addFunction}
                       />
                     </div>
