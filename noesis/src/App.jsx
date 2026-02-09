@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import Home from './pages/Home';
-import Math from './pages/Math';
+import Math from './pages/MathNew';
 import Physics from './pages/Physics';
 import Projectile from './pages/Projectile';
 import Pendulum from './pages/Pendulum';
@@ -18,25 +19,27 @@ import './index.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/math" element={<Math />} />
-        <Route path="/physics" element={<Physics />} />
-        <Route path="/projectile" element={<Projectile />} />
-        <Route path="/pendulum" element={<Pendulum />} />
-        <Route path="/collision" element={<Collision />} />
-        <Route path="/pascals-law" element={<PascalsLaw />} />
-        <Route path="/magnetic-field" element={<MagneticField />} />
-        <Route path="/faradays-law" element={<FaradaysLaw />} />
-        <Route path="/refraction" element={<Refraction />} />
-        <Route path="/lens-simulator" element={<LensSimulator />} />
-        <Route path="/prism" element={<Prism />} />
-        <Route path="/documentation" element={<Documentation />} />
-        <Route path="/examples" element={<Examples />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/math" element={<Math />} />
+          <Route path="/physics" element={<Physics />} />
+          <Route path="/projectile" element={<Projectile />} />
+          <Route path="/pendulum" element={<Pendulum />} />
+          <Route path="/collision" element={<Collision />} />
+          <Route path="/pascals-law" element={<PascalsLaw />} />
+          <Route path="/magnetic-field" element={<MagneticField />} />
+          <Route path="/faradays-law" element={<FaradaysLaw />} />
+          <Route path="/refraction" element={<Refraction />} />
+          <Route path="/lens-simulator" element={<LensSimulator />} />
+          <Route path="/prism" element={<Prism />} />
+          <Route path="/documentation" element={<Documentation />} />
+          <Route path="/examples" element={<Examples />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 
